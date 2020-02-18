@@ -1,74 +1,46 @@
 <!doctype html>
 <html>
 <head>
-<!--link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"-->
-<link rel="stylesheet" type="text/css" href="css\bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/jquery.dataTables.min.js"></script>
+<script src="js/dataTables.bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/dataTables.bootstrap.min.css">
+
+<link rel="stylesheet" type="text/css" href="css/w3.css">
+<link rel="stylesheet" type="text/css" href="css/all.css">
+
+
 <script src="js/bootstrap.min.js"></script>
+<script src="js/w3.js"></script>
 <meta charset="utf-8">
-<title>Untitled Document</title>
+<title>Laporan Nasabah</title>
 </head>
 
-<body style="padding-top: 70px">
-<nav class="navbar navbar-default navbar-fixed-top">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#topFixedNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-      <a class="navbar-brand" href="#">Brand</a></div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="topFixedNavbar1">
-      <ul class="nav navbar-nav">
-        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Master<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="home_agen.php">Agen</a></li>
-            <li class="divider"></li>
-            <li><a href="home_nasabah.php" >Data Nasabah</a></li>
-            <li><a href="home_rumah.php">Data Rumah</a></li>
-            <li><a href="home_lokasi.php">Lokasi</a></li>
-          </ul>
-        </li>
-        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Transaksi<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="home_penjualan_polis.php">Penjualan Polis</a></li>
-            <li class="divider"></li>
-            <li><a href="home_pembayaran_polis.php">Pembayaran Polis</a></li>
-            <li><a href="home_klaim_polis.php">Klaim Polis</a></li>
-          </ul>
-        </li>
-        <li class="dropdown active"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Laporan<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="lap_nasabah.php">Laporan Nasabah</a></li>
-            <li><a href="lap_rumah.php">Laporan Rumah</a></li>
-            <li class="divider"></li>
-            <li><a href="lap_penjualan.php">Laporan Penjualan</a></li>
-            <li><a href="lap_pembayaran.php">Laporan Pembayaran</a></li>
-            <li><a href="lap_klaim.php">Laporan Klaim</a></li>
-          </ul>
-        </li>
-      </ul>
-  
-      
-    </div>
-    <!-- /.navbar-collapse -->
-  </div>
-  <!-- /.container-fluid -->
-</nav>
+<body>
+<?php
+	require 'sidebar.php';
+?>
 <?php
 	require "koneksi.php";
-	$laporan = mysqli_query($config, "SELECT `KodeNasabah`, `Identitas`, `Nama`, `Alamat`, `Kota`, `Telepon`, `Alamat1`, `NPWP` from `nasabah`") or die('Gagal mencari'.mysqli_error($config));
+	$laporan = mysqli_query($config, "SELECT `kode_nas`, `identitas`, `nama_nas`, `alamat_nas`, `kota`, `telp`, `pekerjaan` from `nasabah`") or die('Gagal mencari'.mysqli_error($config));
 ?>
-<div class="container-fluid">
-<div class="row">
-    <div class="col-sm-2">
-      <img src="images/Logo.png" class="img-responsive" alt=""/> </div>
-    <div class="col-sm-10">
-    <center>
-    <h1>PT. Asuransi Central Asia</h1>
-    <h3>Perlindungan Kami adalah Kenyamanan Anda</h3>
-    <h2>Laporan Data Nasabah</h2></center>
-    </div>
+<div class="main" id="main">
+<div class="w3-white">
+  <button id="openNav" class="w3-button w3-white w3-large" style="position:fixed;" onclick="w3_open()">&#9776;</button>
+  <image src="images/Logo.png" style="position: absolute; top:16px; right: 20px;;" width="20%" class="w3-right">
+  <div class="w3-container">
+    <h1 class="page-header">Laporan Nasabah</h1>
+  </div>
 </div>
+<script>
+$(document).ready(function() {
+    $('#table_id').DataTable();
+} );
+</script>
+
+<div class="container-fluid">
 <!--div class="container-fluid"-->
 <table class="table table-bordered table-hover table-striped">
   <tbody>
@@ -79,8 +51,7 @@
       <th scope="col">Alamat</th>
       <th scope="col">Kota</th>
       <th scope="col">Telepon</th>
-      <th scope="col">Kantor</th>
-      <th scope="col">NPWP</th>
+      <th scope="col">Pekerjaan</th>
     </tr>
     <?php
 		while($data = mysqli_fetch_row($laporan)){
@@ -93,13 +64,13 @@
       <td>$data[4]</td>
       <td>$data[5]</td>
       <td>$data[6]</td>
-      <td>$data[7]</td>
     </tr>";
 		}
 	?>
   </tbody>
 </table>
 <!--/div-->
+</div>
 </div>
 
 

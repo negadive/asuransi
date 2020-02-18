@@ -2,7 +2,7 @@
 $servername = "localhost";
 $user		= "root";
 $pasword	= "";
-$db			= "asuransi";
+$db			= "asuransi2";
 
 $config = mysqli_connect ($servername,$user, $pasword,$db )
 			or die ('gagal terkoneksi'.mysqli_error($config));

@@ -1,15 +1,17 @@
 <?php
-session_start();
+	session_start();
+	require "koneksi.php";
+	$id_nas = $_GET['id'];
+	$get_nas = mysqli_query ($config, "SELECT * FROM `nasabah` WHERE `kode_nas` = '".$id_nas."'");
+	$data = mysqli_fetch_row($get_nas);
 
 if(isset($_REQUEST['submit'])){
-	require "koneksi.php";
-	if($_POST['kd_nsbh'] != "" && $_POST['nm_nsbh'] != "" && $_POST['alm_nsbh'] != "" && $_POST['jk_nsbh'] != "" && 
+	if($_POST['nm_nsbh'] != "" && $_POST['alm_nsbh'] != "" && $_POST['jk_nsbh'] != "" && 
 		$_POST['kota_nsbh'] != "" && $_POST['klr_nsbh'] != "" && $_POST['tlp_nsbh'] != "" && $_POST['rt_nsbh'] != "" && 
 		$_POST['rw_nsbh'] != "" && $_POST['kcm_nsbh'] != "" && $_POST['kdp_nsbh'] != "" && $_POST['tl_nsbh'] != "" && 
 		$_POST['tml_nsbh'] != "" && $_POST['ku_nsbh'] != "" && $_POST['ppb_nsbh'] != "" && $_POST['ni_nsbh']){
 		
 
-		$kd_nsbh = $_POST['kd_nsbh'];
 		$nm_nsbh = $_POST['nm_nsbh'];
 		$alm_nsbh = $_POST['alm_nsbh'];
 		$jk_nsbh = $_POST['jk_nsbh'];
@@ -24,39 +26,46 @@ if(isset($_REQUEST['submit'])){
 		$tl_nsbh = $_POST['tl_nsbh'];
 		$tml_nsbh = $_POST['tml_nsbh'];
 		$ku_nsbh = $_POST['ku_nsbh'];
+		$almku_nsbh = $_POST['almku_nsbh'];
+		$jbt_nsbh = $_POST['jbt_nsbh'];
 		$ppb_nsbh = $_POST['ppb_nsbh'];
 		//$npwp_nsbh = $_POST['npwp_nsbh'];
 		$ni_nsbh = $_POST['ni_nsbh'];
-
-		if(!preg_match("/^[a-zA-Z0-9.-]*$/", $kd_nsbh)){
-			$_SESSION['errMes'] .= '<li>Kode nasabah hanya boleh mengandung huruf, angka, titik(.) dan minus(-)</li>';
-			//$_SESSION['error'] = true;
-		}
-		if(!preg_match("/^[a-zA-Z .,]*$/", $nm_nsbh)){
-			$_SESSION['errMes'] .= '<li>Nama nasabah hanya boleh mengandung huruf, titik(.), koma(,) dan spasi</li>';
+		
+		if(!preg_match("/^[a-zA-Z., ]*$/", $nm_nsbh)){
+			$_SESSION['errMes'] .= '<li>Nama nasabah hanya boleh mengandung huruf, titik(.) dan koma(,)</li>';
 			//$_SESSION['error'] = true;
 		}
 		if(!preg_match("/^[0-9.-]*$/", $tlp_nsbh)){
 			$_SESSION['errMes'] .= '<li>No telpon hanya boleh mengandung angka, titik(.) dan koma(,)</li>';
 			//$_SESSION['error'] = true;
 		} 
-
 		if($_SESSION['errMes']){
 			//echo '<script language ="javascript">window.history.back();</script>';
 		}else {
+		
 			$simpan = mysqli_query($config,
-				'INSERT INTO `nasabah` VALUES ("'.$kd_nsbh.'", "'.$nm_nsbh.'", "'.$jk_nsbh.'", "'.$alm_nsbh.'",
-											 "'.$klr_nsbh.'", "'.$rt_nsbh.'", "'.$rw_nsbh.'", "'.$kota_nsbh.'",
-											 "'.$kcm_nsbh.'", "'.$tlp_nsbh.'", "'.$kdp_nsbh.'", "'.$tl_nsbh.'",
-											 "'.$tml_nsbh.'", "'.$ku_nsbh.'", "'.$ppb_nsbh.'", "'.$ni_nsbh.'")');
-					//or die ('gagal terkoneksi'.mysqli_error($config));
+				"UPDATE `nasabah` SET	`nama_nas` = '".$nm_nsbh."', 
+										`alamat_nas` = '".$alm_nsbh."',
+										`kota` = '".$kota_nsbh."', 
+										`kdpos` = '".$kdp_nsbh."', 
+										`telp` = '".$tlp_nsbh."', 
+										`tgl_lah` = '".$tl_nsbh."', 
+										`tmpt_lah` = '".$tml_nsbh."', 
+										`jen_kel` = '".$jk_nsbh."',
+										`pekerjaan` = '".$ku_nsbh."', 
+										`pendapatan` = '".$ppb_nsbh."',
+										`identitas` = '".$ni_nsbh."',
+										`kelurahan` = '".$klr_nsbh."', 
+										`kecamatan` = '".$kcm_nsbh."', 
+										`rt` = '".$rt_nsbh."', 
+										`rw` = '".$rw_nsbh."' WHERE `kode_nas` = '".$id_nas."'");
 			if($simpan){
 				$_SESSION['Succ'] = true;
+				header('Location: inasabah.php?id='.$id_nas);
 			} else {
 				$_SESSION['errMes'] .=  '<li>'.mysqli_error($config).'</li>';
-				//$_SESSION['error'] = true;
 			}
-			//header('Location: input_nasabah.php');
 		}
 	}else{
 		$_SESSION['errMes'] .= '<li>Form tidak boleh ada yang kosong</li>';
@@ -68,17 +77,16 @@ if(isset($_REQUEST['submit'])){
 <!doctype html>
 <html>
 <head>
-<!--link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"-->
-<script src="js/jquery.dataTables.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.min.css">
-<script src="js/w3.js"></script>
-<link rel="stylesheet" type="text/css" href="css\w3.css">
-<link rel="stylesheet" type="text/css" href="css\bootstrap.min.css">
 <script src="js/jquery-3.3.1.js"></script>
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/w3.css">
+<link rel="stylesheet" type="text/css" href="css/all.css">
 <script src="js/bootstrap.min.js"></script>
+<script src="js/w3.js"></script>
+
 <meta charset="utf-8">
-<title>Pendaftaran Nasabah</title>
+<title>Ubah Data Nasabah</title>
 </head>
 
 <body>
@@ -91,7 +99,7 @@ if(isset($_REQUEST['submit'])){
 	<button id="openNav" class="w3-button w3-white w3-large" style="position:fixed;" onclick="w3_open()">&#9776;</button>
 	<image src="images/Logo.png" style="position: absolute; top:16px; right: 20px;;" width="20%" class="w3-right">
 	<div class="w3-container">
-		<h1 class="page-header">Pendaftaran Nasabah</h1>
+		<h1 class="page-header">Data Nasabah</h1>
 	</div>
 </div>
 <div>
@@ -117,24 +125,11 @@ if(isset($_REQUEST['submit'])){
 		$_SESSION['Succ'] = false;
 		?>
         <form class="form-horizontal" id="in_nasabah" name="in_nasabah" method="post" action="">
-            <div class="form-group" style="">
-                <label class="control-label col-sm-3">Kode Nasabah</label>
-                <div class="col-sm-2">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($kd_nsbh)){
-							echo $kd_nsbh;
-						} ?>" name="kd_nsbh">
-                </div>
-            </div>
             <div class="form-group">
                 <label class="control-label col-sm-3">Nama</label>
                 <div class="col-sm-3">
                 <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($nm_nsbh)){
-							echo $nm_nsbh;
-						} ?>" name="nm_nsbh">
+					value="<?php echo $data[1];?>" name="nm_nsbh">
                 </div>
             </div>
             <div class="form-group row">
@@ -150,123 +145,86 @@ if(isset($_REQUEST['submit'])){
                 <label class="control-label col-sm-3">Alamat</label>
                 <div class="col-sm-7">
                 <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($alm_nsbh)){
-							echo $alm_nsbh;
-						} ?>" name="alm_nsbh">
+					value="<?php echo $data[3];?>" name="alm_nsbh">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="control-label col-sm-3">Kelurahan</label>
                 <div class="col-sm-3">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($klr_nsbh)){
-							echo $klr_nsbh;
-						} ?>" name="klr_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[4];?>" name="klr_nsbh">
                 </div>
                 <label class="control-label col-sm-1">RT</label>
                 <div class="col-sm-1">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($rt_nsbh)){
-							echo $rt_nsbh;
-						} ?>" name="rt_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[5];?>" name="rt_nsbh">
                 </div>
                 <label class="control-label col-sm-1">RW</label>
                 <div class="col-sm-1">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($rw_nsbh)){
-							echo $rw_nsbh;
-						} ?>" name="rw_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[6];?>" name="rw_nsbh">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="control-label col-sm-3">Kota</label>
                 <div class="col-sm-3">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($kota_nsbh)){
-							echo $kota_nsbh;
-						} ?>" name="kota_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[7];?>" name="kota_nsbh">
                 </div>
                 <label class="control-label col-sm-1">Kecamatan</label>
                 <div class="col-sm-3">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($kcm_nsbh)){
-							echo $kcm_nsbh;
-						} ?>" name="kcm_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[8];?>" name="kcm_nsbh">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="control-label col-sm-3">Telepon</label>
                 <div class="col-sm-3">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($tlp_nsbh)){
-							echo $tlp_nsbh;
-						} ?>" name="tlp_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[9];?>" name="tlp_nsbh">
                 </div>
                 <label class="control-label col-sm-1">Kode Pos</label>
                 <div class="col-sm-3">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($kdp_nsbh)){
-							echo $kdp_nsbh;
-						} ?>" name="kdp_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[10];?>" name="kdp_nsbh">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="control-label col-sm-3">Tanggal lahir</label>
                 <div class="col-sm-2">
                 <input type="date" class="form-control" 
-					value="<?php 
-						if(isset($tl_nsbh)){
-							echo $tl_nsbh;
-						} ?>" name="tl_nsbh">
+					value="<?php echo $data[11];?>" name="tl_nsbh">
                 </div>
                 <label class="control-label col-sm-2">Tempat Lahir</label>
                 <div class="col-sm-3">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($tml_nsbh)){
-							echo $tml_nsbh;
-						} ?>" name="tml_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[12];?>" name="tml_nsbh">
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-sm-3">Pekerjaan</label>
                 <div class="col-sm-3">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($ku_nsbh)){
-							echo $ku_nsbh;
-						} ?>" name="ku_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[13];?>" name="ku_nsbh">
                 </div>
                 <label class="control-label col-sm-2">Pendapatan Per Bulan</label>
               <div class="col-sm-2">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($ppb_nsbh)){
-							echo $ppb_nsbh;
-						} ?>" name="ppb_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[14];?>" name="ppb_nsbh">
                 </div>
             </div>
             <div class="form-group row">
               <label class="control-label col-sm-3">No Identitas</label>
               <div class="col-sm-3">
-                <input type="text" class="form-control" 
-					value="<?php 
-						if(isset($ni_nsbh)){
-							echo $ni_nsbh;
-						} ?>" name="ni_nsbh">
+                <input type="text" class="form-control"  
+					value="<?php echo $data[15];?>" name="ni_nsbh">
                 </div>
             </div>
-  <center><input type="submit" name="submit" class="btn btn-primary" value="Simpan"></center>
-</form>
-</div>
+			
+			<center><input type="submit" name="submit" class="btn btn-primary" value="Simpan"></center>
+			
+		</form>
+	</div>
 </div>
 </div>
 </body>

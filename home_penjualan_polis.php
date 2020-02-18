@@ -1,94 +1,68 @@
 <!doctype html>
 <html>
 <head>
-<!--link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"-->
-<link rel="stylesheet" type="text/css" href="css\bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/jquery.dataTables.min.js"></script>
+<script src="js/dataTables.bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/dataTables.bootstrap.min.css">
+
+<link rel="stylesheet" type="text/css" href="css/w3.css">
+<link rel="stylesheet" type="text/css" href="css/all.css">
+
+
 <script src="js/bootstrap.min.js"></script>
+
+<script src="js/w3.js"></script>
 <meta charset="utf-8">
-<title>Untitled Document</title>
+<title>Polis</title>
 </head>
 
-<body style="padding-top: 70px">
-<nav class="navbar navbar-default navbar-fixed-top">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#topFixedNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-      <a class="navbar-brand" href="#">Brand</a></div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="topFixedNavbar1">
-      <ul class="nav navbar-nav">
-        <li class="dropdown "><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Master<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="home_agen.php">Agen</a></li>
-            <li class="divider"></li>
-            <li><a href="home_nasabah.php" >Data Nasabah</a></li>
-            <li><a href="home_rumah.php">Data Rumah</a></li>
-            <li><a href="home_lokasi.php">Lokasi</a></li>
-          </ul>
-        </li>
-        <li class="dropdown active"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Transaksi<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="home_penjualan_polis.php">Penjualan Polis</a></li>
-            <li class="divider"></li>
-            <li><a href="home_pembayaran_polis.php">Pembayaran Polis</a></li>
-            <li><a href="home_klaim_polis.php">Klaim Polis</a></li>
-          </ul>
-        </li>
-        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Laporan<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="lap_nasabah.php">Laporan Nasabah</a></li>
-            <li><a href="lap_rumah.php">Laporan Rumah</a></li>
-            <li class="divider"></li>
-            <li><a href="lap_penjualan.php">Laporan Penjualan</a></li>
-            <li><a href="lap_pembayaran.php">Laporan Pembayaran</a></li>
-            <li><a href="lap_klaim.php">Laporan Klaim</a></li>
-          </ul>
-        </li>
-      </ul>
-  
-      
-    </div>
-    <!-- /.navbar-collapse -->
-  </div>
-  <!-- /.container-fluid -->
-</nav>
+<body >
 <?php
+	require 'sidebar.php';
 	require "koneksi.php";
-	$laporan = mysqli_query($config, "SELECT p.NomorPolis,  p.Tanggal, p.Akhir, n.Nama, r.Lokasi, p.TotalBangunan, p.TotalIsi,  p.TotalBangunan+p.TotalIsi FROM polis p JOIN nasabah n ON p.KodeNasabah = n.KodeNasabah JOIN rumah r ON p.KodeLokasi = r.KodeLokasi") or die('Gagal mencari'.mysqli_error($config));
 ?>
+<div class="main" id="main">
+<div class="w3-white">
+  <button id="openNav" class="w3-button w3-white w3-large" style="position:fixed;" onclick="w3_open()">&#9776;</button>
+  <image src="images/Logo.png" style="position: absolute; top:16px; right: 20px;;" width="20%" class="w3-right">
+  <div class="w3-container">
+    <h1 class="page-header">Polis</h1>
+  </div>
+</div>
+<script>
+$(document).ready(function() {
+    $('#table_id').DataTable();
+} );
+</script>
 <div class="container"> 
-<a class="btn btn-primary" href="input_penjualan_polis.php">Tambah</a>
-<table class="table table-bordered table-hover table-striped">
-  <tbody>
+<table id="table_id" class="table table-striped table-bordered" style="width:100%">
+  <thead>
     <tr>
       <th scope="col">Nomor Polis</th>
       <th scope="col"><center>Tanggal Polis</center></th>
       <th scope="col"><center>Tanggal J Tempo</center></th>
       <th scope="col">Nama Nasabah</th>
-      <th scope="col">Lokasi Rumah</th>
-      <th scope="col"><center>Tanggungan Bangunan</center></th>
-      <th scope="col"><center>Tanggungan Isi Rumah</center></th>
+      <th scope="col"><center>Total Tanggungan</center></th>
       <th scope="col"><center>Total</center></th>
-      <th scope="col">Bayar</th>
-      <th colspan="2" scope="col"><center>Aksi</center></th>
     </tr>
-    <?php
-		while($data = mysqli_fetch_row($laporan)){
+	</thead>
+	<tbody>
+    <?php	
+	
+		$laporan = mysqli_query($config, "SELECT p.no_pol,  p.tanggal, p.akhir, n.nama_nas, p.tot_tang,  p.total FROM polis p JOIN nasabah n ON p.kd_nas = n.kode_nas") or die('Gagal mencari'.mysqli_error($config));
+		while($data = mysqli_fetch_array($laporan)){
     echo"
 	<tr>
-      <td>$data[0]</td>
+      <td><a href='ipolis.php?id=$data[0]'>$data[0]</a></td>
       <td><center>".date('d F Y',strtotime($data[1]))."</center></td>
       <td><center>".date('d F Y',strtotime($data[2]))."</center></td>
       <td>$data[3]</td>
       <td>$data[4]</td>
       <td align='right'>$data[5]</td>
-      <td align='right'>$data[6]</td>
-      <td align='right'>$data[7]</td>
-      <td></td>
-      <td><center><a class='btn btn-success' href='edit_penjualan_polis.php?kode=$data[0]'>Edit</a></center></td>
-      <td><center><a class='btn btn-danger' href='hapus_penjualan_polis.php?kode=$data[0]'>Hapus</a></center></td>
     </tr>";
 		}
 	?>
@@ -96,7 +70,7 @@
 </table>
 <!--/div-->
 </div>
-
+</div>
 
 </body>
 </html>

@@ -1,75 +1,39 @@
 <!doctype html>
 <html>
 <head>
-<!--link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"-->
-<link rel="stylesheet" type="text/css" href="css\bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/jquery.dataTables.min.js"></script>
+<script src="js/dataTables.bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/dataTables.bootstrap.min.css">
+
+<link rel="stylesheet" type="text/css" href="css/w3.css">
+<link rel="stylesheet" type="text/css" href="css/all.css">
+
+
 <script src="js/bootstrap.min.js"></script>
+<script src="js/w3.js"></script>
 <meta charset="utf-8">
-<title>Untitled Document</title>
+<title>Laporan Pembayaran Polis</title>
+
 </head>
 
-<body style="padding-top: 70px">
-<nav class="navbar navbar-default navbar-fixed-top">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#topFixedNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-      <a class="navbar-brand" href="#">Brand</a></div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="topFixedNavbar1">
-      <ul class="nav navbar-nav">
-        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Master<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="home_agen.php">Agen</a></li>
-            <li class="divider"></li>
-            <li><a href="home_nasabah.php" >Data Nasabah</a></li>
-            <li><a href="home_rumah.php">Data Rumah</a></li>
-            <li><a href="home_lokasi.php">Lokasi</a></li>
-          </ul>
-        </li>
-        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Transaksi<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="home_penjualan_polis.php">Penjualan Polis</a></li>
-            <li class="divider"></li>
-            <li><a href="home_pembayaran_polis.php">Pembayaran Polis</a></li>
-            <li><a href="home_klaim_polis.php">Klaim Polis</a></li>
-          </ul>
-        </li>
-        <li class="dropdown active"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Laporan<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="lap_nasabah.php">Laporan Nasabah</a></li>
-            <li><a href="lap_rumah.php">Laporan Rumah</a></li>
-            <li class="divider"></li>
-            <li><a href="lap_penjualan.php">Laporan Penjualan</a></li>
-            <li><a href="lap_pembayaran.php">Laporan Pembayaran</a></li>
-            <li><a href="lap_klaim.php">Laporan Klaim</a></li>
-          </ul>
-        </li>
-      </ul>
-  
-      
-    </div>
-    <!-- /.navbar-collapse -->
-  </div>
-  <!-- /.container-fluid -->
-</nav>
+<body>
 <?php
-	require "koneksi.php";
-	$laporan = mysqli_query($config, "SELECT b.NomorBayar, b.NomorPolis, p.Tanggal, n.Nama, r.Lokasi, b.Tanggal, b.Total FROM bayar b JOIN polis p ON b.NomorPolis = p.NomorPolis JOIN nasabah n ON p.KodeNasabah = n.KodeNasabah JOIN rumah r ON p.KodeLokasi = r.KodeLokasi") or die('Gagal mencari'.mysqli_error($config));
+	require 'sidebar.php';
 ?>
-<div class="container-fluid">
-<div class="row">
-    <div class="col-sm-2">
-      <img src="images/Logo.png" class="img-responsive" alt=""/> </div>
-    <div class="col-sm-10">
-    <center>
-    <h1>PT. Asuransi Central Asia</h1>
-    <h3>Perlindungan Kami adalah Kenyamanan Anda</h3>
-    <h2>Laporan Pembayaran Polis</h2></center>
-    </div>
+<?php
+?>
+<div class="main" id="main">
+<div class="w3-white">
+  <button id="openNav" class="w3-button w3-white w3-large" style="position:fixed;" onclick="w3_open()">&#9776;</button>
+  <image src="images/Logo.png" style="position: absolute; top:16px; right: 20px;;" width="20%" class="w3-right">
+  <div class="w3-container">
+    <h1 class="page-header">Laporan Pembayaran Polis</h1>
+  </div>
 </div>
-<!--div class="container-fluid"-->
+<div class="container-fluid">
 <table class="table table-bordered table-hover table-striped">
   <tbody>
     <tr>
@@ -77,11 +41,13 @@
       <th scope="col">Nomor Polis</th>
       <th scope="col">Tanggal</th>
       <th scope="col">Nama Nasabah</th>
-      <th scope="col">Lokasi Rumah</th>
       <th scope="col">Tanggal Bayar</th>
       <th scope="col">Jumlah</th>
     </tr>
     <?php
+		require "koneksi.php";
+		$laporan = mysqli_query($config, "SELECT b.no_bay, b.no_pol, p.tanggal, n.nama_nas, b.tanggal, b.total FROM bayar b JOIN polis p ON b.no_pol = p.no_pol JOIN nasabah n ON p.kd_nas = n.kode_nas") or die('Gagal mencari'.mysqli_error($config));
+
 		while($data = mysqli_fetch_row($laporan)){
     echo"
 	<tr>
@@ -89,23 +55,21 @@
       <td>$data[1]</td>
       <td>".date('d F Y',strtotime($data[2]))."</td>
       <td>$data[3]</td>
-      <td>$data[4]</td>
-      <td>".date('d F Y',strtotime($data[5]))."</td>
-      <td align='right'>$data[6]</td>
+      <td>".date('d F Y',strtotime($data[4]))."</td>
+      <td align='right'>$data[5]</td>
     </tr>";
 		}
 	echo "
 	<tr>
-		<td colspan='6' align='right'><b>Total</b></td>";
-		$laporan = mysqli_query($config, "SELECT SUM(b.Total) FROM bayar b JOIN polis p ON b.NomorPolis = p.NomorPolis JOIN nasabah n ON p.KodeNasabah = n.KodeNasabah JOIN rumah r ON p.KodeLokasi = r.KodeLokasi") or die('Gagal mencari'.mysqli_error($config));
-		$data2 = mysqli_fetch_row($laporan);
+		<td colspan='5' align='right'><b>Total</b></td>";
+		$data2 = mysqli_fetch_row(mysqli_query($config, "SELECT SUM(b.total) FROM bayar b JOIN polis p ON b.no_pol = p.no_pol JOIN nasabah n ON p.kd_nas = n.kode_nas "));
 	echo "
 		<td align='right'>$data2[0]</td>
 	<tr>";
 	?>
   </tbody>
 </table>
-<!--/div-->
+</div>
 </div>
 
 

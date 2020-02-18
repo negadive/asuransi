@@ -12,13 +12,9 @@
 	$kd = $_GET['id'];
 	
 	$simpan = mysqli_query($config,
-		"DELETE FROM `nasabah` WHERE `kode_nas` = '$kd'")
+		"DELETE FROM `polis` WHERE `no_reg` = '$kd'")
 			or die ('Gagal merubah data'.mysqli_error($config));
-	if($simpan){
-		header('Location: home_nasabah.php');
-	}else{
-		header('Location: inasabah.php?id=$kd.php');
-	}
+	header('Location: home_jual_polis.php');
 ?>
 </body>
 </html>
